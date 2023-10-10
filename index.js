@@ -4,7 +4,8 @@ import bcrypt from 'bcrypt';
 import mongoose from "mongoose";
 import { registerValidation } from "./validation/auth.js";
 import { validationResult } from "express-validator";
-import UserModel from "./models/User.js"
+import UserModel from "./models/User.js";
+import checkAuth from "./utils/checkAuth.js";
 
 mongoose
     .connect('mongodb+srv://victoria:wwwww@cluster0.3rxehii.mongodb.net/blog?retryWrites=true&w=majority&appName=AtlasApp')
@@ -16,6 +17,19 @@ app.use(express.json());
 
 const PORT = 4444;
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
+
+app.get('/auth/me', checkAuth, async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.userId)
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        const { passwordHash, ...userData } = user._doc;
+        res.json(user._doc);
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Authentification is invalid' })
+    }
+})
 
 app.get('/', (req, res) => {
     res.send('Hello bka bla bla')
@@ -42,17 +56,14 @@ app.post('/auth/login', async (req, res) => {
             }
         );
 
-        const { passwordHash, ...userData } = user._doc
-
+        const { passwordHash, ...userData } = user._doc;
         res.json({
             ...userData,
             token
         });
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            message: 'Authorisation is invalid'
-        })
+        res.status(500).json({ message: 'Authorisation is invalid' })
     }
 })
 
@@ -99,9 +110,7 @@ app.post('/auth/register', registerValidation, async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            message: 'Registration is invalid'
-        })
+        res.status(500).json({ message: 'Registration is invalid' })
     }
 })
 

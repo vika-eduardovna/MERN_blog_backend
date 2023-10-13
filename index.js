@@ -1,8 +1,9 @@
 import express from "express";
 import mongoose from "mongoose";
-import { registerValidation } from "./validation/auth.js";
+import { registerValidation, loginValidation } from "./validations.js";
 import checkAuth from "./utils/checkAuth.js";
 import { register, login, authMe } from "./controllers/UserController.js";
+import { create } from "./controllers/PostController.js";
 
 
 mongoose
@@ -16,7 +17,12 @@ app.use(express.json());
 const PORT = 4444;
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
 
-app.post('/auth/login', login);
+app.post('/auth/login', loginValidation, login);
 app.post('/auth/register', registerValidation, register);
 app.get('/auth/me', checkAuth, authMe);
 
+// app.get('/posts', getAll);
+// app.get('/posts/:id', getOne);
+app.post('/posts', create);
+// app.delete('/posts', remove);
+// app.patch('/posts', update);

@@ -5,6 +5,7 @@ import { registerValidation, loginValidation, postCreateValidation } from "./val
 import checkAuth from "./utils/checkAuth.js";
 import { register, login, authMe } from "./controllers/UserController.js";
 import { create, getOne, getAll, remove, update } from "./controllers/PostController.js"
+import handleValidationErrors from "./utils/handleValidationErrors.js";
 
 
 mongoose
@@ -31,8 +32,8 @@ const PORT = 4444;
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
 
 
-app.post('/auth/login', loginValidation, login);
-app.post('/auth/register', registerValidation, register);
+app.post('/auth/login', loginValidation, handleValidationErrors, login);
+app.post('/auth/register', registerValidation, handleValidationErrors, register);
 app.get('/auth/me', checkAuth, authMe);
 app.use('/uploads', express.static('uploads'));
 app.post('/upload', checkAuth, upload.single('image'), (req, res) => {

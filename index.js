@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
 import mongoose from "mongoose";
+import cors from 'cors';
 import { registerValidation, loginValidation, postCreateValidation } from "./validations.js";
 import checkAuth from "./utils/checkAuth.js";
 import { register, login, authMe } from "./controllers/UserController.js";
@@ -15,6 +16,7 @@ mongoose
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const storage = multer.diskStorage({
     destination: (_, __, cb) => {

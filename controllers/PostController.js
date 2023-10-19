@@ -91,4 +91,19 @@ export const update = async (req, res) => {
         res.status(500).json({ message: 'Error occurred while updating posts' });
     }
 
+};
+
+export const getLastTags = async (req, res) => {
+    try {
+        const posts = await Post.find().limit(5).exec();
+        const tags = posts
+            .map(obj => obj.tags)
+            .flat()
+            .slice(0, 6);
+
+        res.json(tags);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error retrieving posts' })
+    }
 }

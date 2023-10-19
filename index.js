@@ -5,12 +5,12 @@ import cors from 'cors';
 import { registerValidation, loginValidation, postCreateValidation } from "./validations.js";
 import checkAuth from "./utils/checkAuth.js";
 import { register, login, authMe } from "./controllers/UserController.js";
-import { create, getOne, getAll, remove, update } from "./controllers/PostController.js"
+import { create, getOne, getAll, remove, update, getLastTags } from "./controllers/PostController.js"
 import handleValidationErrors from "./utils/handleValidationErrors.js";
 
 
 mongoose
-    .connect('mongodb+srv://victoria:wwwww@cluster0.3rxehii.mongodb.net/blog?retryWrites=true&w=majority&appName=AtlasApp')
+    .connect('mongodb+srv://my_blog:wwww@blog.ihq87zl.mongodb.net/blog?retryWrites=true&w=majority')
     .then(() => console.log('DB ok'))
     .catch((err) => console.log('Something wrong with DB', err));
 
@@ -43,9 +43,10 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
         url: `/uploads/${req.file.originalname}`
     });
 });
-
+app.get('/tags', getLastTags);
 app.get('/posts', getAll);
 app.get('/posts/:id', getOne);
+// app.get('/posts/tags', getLastTags);
 app.post('/posts', checkAuth, postCreateValidation, create);
 app.delete('/posts/:id', checkAuth, remove);
 app.patch('/posts/:id', checkAuth, update);
